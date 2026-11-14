@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import ReactMap, { Layer, NavigationControl, Source } from "react-map-gl/maplibre";
+import ReactMap, { Layer, Marker, NavigationControl, Source } from "react-map-gl/maplibre";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { setWorkerUrl } from "maplibre-gl";
@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useLoadChanges } from "@/hooks/useLoadChanges";
 import { SearchLoadsOutputSchema } from "@/lib/agent/schemas";
 import type { LoadRecord } from "@/lib/loads/types";
+import { Icon } from "@/theme/components";
 import { colors } from "@/theme/variables";
 
 import {
@@ -30,6 +31,7 @@ import {
   leftPanel,
   list,
   map as mapClass,
+  markerClass,
   meta,
   negotiating,
   negotiationActions,
@@ -348,6 +350,22 @@ const MapClient = (): React.JSX.Element => {
           style={{ height: "100%", width: "100%" }}
         >
           <NavigationControl position="bottom-right" />
+          {visibleItems.map((item) => (
+            <Marker
+              anchor="center"
+              className={markerClass}
+              key={item.id}
+              latitude={item.originLat}
+              longitude={item.originLon}
+            >
+              <Icon
+                aria-label={`Freight pickup at ${item.origin}`}
+                className={markerClass}
+                id="freight"
+                role="img"
+              />
+            </Marker>
+          ))}
           <Source
             data={geoJson}
             id={lineSourceId}

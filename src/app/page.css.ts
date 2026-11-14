@@ -8,6 +8,12 @@ const shell = style(({ colors }) => ({
   position: "relative",
 }));
 const map = style({ height: "100%", inset: 0, position: "absolute", width: "100%" });
+const markerClass = style(({ colors }) => ({
+  color: colors.yellow,
+  display: "block",
+  height: 18,
+  width: 18,
+}));
 const top = style({
   left: "50%",
   maxWidth: 680,
@@ -134,6 +140,6 @@ globalStyle(".maplibregl-ctrl-group", ({ colors }) => ({ background: colors.pane
 globalStyle(".maplibregl-ctrl button", { filter: "invert(1)" });
 
 export {
-  brand, button, card, chip, error, header, input, leftPanel, list, map, meta, negotiating, negotiationActions,
+  brand, button, card, chip, error, header, input, leftPanel, list, map, markerClass, meta, negotiating, negotiationActions,
   rightPanel, route, search, shell, status, success, timeline, timelineItem, title, tools, top, warning,
 };

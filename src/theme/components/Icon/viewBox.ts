@@ -4,5 +4,6 @@ export const viewBox: Record<TIconId, string> = {
   car: "0 0 24 24",
   checkmark: "0 0 24 24",
   exclamation: "0 0 512 512",
+  freight: "0 0 24 24",
   trash: "0 0 24 24",
 };
