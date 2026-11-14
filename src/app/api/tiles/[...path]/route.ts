@@ -9,9 +9,22 @@ const TileSourceSchema = z.object({
 }).passthrough();
 const TileStyleSchema = z.object({
   glyphs: z.string().optional(),
+  layers: z.array(
+    z.object({
+      layout: z.record(z.string(), z.unknown()).optional(),
+    }).passthrough()
+  ).optional(),
   sources: z.record(z.string(), TileSourceSchema).optional(),
   sprite: z.string().optional(),
 }).passthrough();
+
+const normalizeSpriteIcon = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map(normalizeSpriteIcon);
+  }
+
+  return value === "circle-11" ? "circle_11" : value;
+};
 
 const proxyUrl = (url: string, requestOrigin: string): string => {
   const resolvedUrl: URL = new URL(url, `${TILE_BASE}/`);
@@ -49,6 +62,14 @@ export const GET = async (
       return new NextResponse("Invalid tile style response.", { status: 502 });
     }
     const style = parsed.data;
+
+    for (const layer of style.layers ?? []) {
+      const layout = layer.layout;
+
+      if (layout?.["icon-image"] !== undefined) {
+        layout["icon-image"] = normalizeSpriteIcon(layout["icon-image"]);
+      }
+    }
 
     if (style.glyphs) {
       style.glyphs = proxyUrl(style.glyphs, request.nextUrl.origin);

@@ -346,7 +346,7 @@ const MapClient = (): React.JSX.Element => {
         <ReactMap
           attributionControl={false}
           initialViewState={{ latitude: 49.8, longitude: 15.4, zoom: 6.7 }}
-          mapStyle="https://tiles.openfreemap.org/styles/fiord?v=2"
+          mapStyle="/api/tiles/styles/fiord?v=2"
           style={{ height: "100%", width: "100%" }}
         >
           <NavigationControl position="bottom-right" />
