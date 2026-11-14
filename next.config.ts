@@ -11,6 +11,9 @@ const withVanillaExtract = createVanillaExtractPlugin({
 
 const config: NextConfig = {
   allowedDevOrigins: ["192.168.0.227", "192.168.0.154"],
+  outputFileTracingIncludes: {
+    "/api/maplibre-worker": ["./node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs"],
+  },
   images: {
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
