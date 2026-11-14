@@ -34,7 +34,9 @@ const proxyUrl = (url: string, requestOrigin: string): string => {
   }
   const path: string = `${resolvedUrl.pathname}${resolvedUrl.search}${resolvedUrl.hash}`;
 
-  return new URL(`/api/tiles${path}`, requestOrigin).toString();
+  return new URL(`/api/tiles${path}`, requestOrigin)
+    .toString()
+    .replace(/%7B([a-z0-9_]+)%7D/gi, "{$1}");
 };
 
 export const GET = async (
