@@ -1,14 +1,15 @@
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-import { db } from "@/lib/db";
-import { loads } from "@/lib/db/schema";
+import { db, schema } from "@/db";
 
-const GET = async (): Promise<NextResponse> => {
-  const result = await db.select().from(loads).where(eq(loads.status, "active"))
-    .orderBy(desc(loads.createdAt)).limit(200);
+export const GET = async (): Promise<NextResponse> => {
+  const result = await db
+    .select()
+    .from(schema.loads)
+    .where(eq(schema.loads.status, "active"))
+    .orderBy(desc(schema.loads.createdAt))
+    .limit(200);
 
   return NextResponse.json(result);
 };
-
-export { GET };

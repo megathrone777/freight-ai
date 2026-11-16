@@ -1,8 +1,8 @@
 const fonts = {
   bold: "700",
-  demi: "500",
-  medium: "600",
+  medium: "500",
   normal: "400",
+  semiBold: "600",
 };
 
 export { fonts };

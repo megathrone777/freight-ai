@@ -1,12 +1,10 @@
 import "@/theme/global";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
-import { avenirFont } from "./fonts";
+import { font } from "./fonts";
 
 const Layout: React.FC<LayoutProps<"/">> = ({ children }) => (
   <html
-    className={avenirFont.variable}
+    className={font.variable}
     lang="en"
   >
     <body>{children}</body>

@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { runFreightEval } from "@/lib/eval/run";
+import { runFreightEval } from "@/services";
 
 export const maxDuration = 60;
 
-const POST = async (): Promise<NextResponse> => NextResponse.json(await runFreightEval());
-
-export { POST };
+export const POST = async (): Promise<NextResponse> => NextResponse.json(await runFreightEval());

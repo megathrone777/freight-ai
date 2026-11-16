@@ -1,13 +1,23 @@
 "use client";
-
 import { useState } from "react";
 
-import type { EvalResult } from "@/lib/eval/run";
-
-import { cell, description, error, heading, page, runButton, stat, statLabel, stats, statValue, table, tableWrap } from "./page.css";
+import {
+  cell,
+  description,
+  error,
+  heading,
+  page,
+  runButton,
+  stat,
+  statLabel,
+  stats,
+  statValue,
+  table,
+  tableWrap,
+} from "./page.css";
 
 const EvalClient = (): React.JSX.Element => {
-  const [result, setResult] = useState<EvalResult | null>(null);
+  const [result, setResult] = useState<null | TEvalResult>(null);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState("");
 
@@ -31,25 +41,58 @@ const EvalClient = (): React.JSX.Element => {
   return (
     <main className={page}>
       <h1 className={heading}>Freight AI evaluation</h1>
-      <p className={description}>Run 15 seeded retrieval cases against active loads. Seed the database before evaluating.</p>
+
+      <p className={description}>
+        Run 15 seeded retrieval cases against active loads. Seed the database before evaluating.
+      </p>
+
       <button
-        className={runButton} disabled={busy}
-        onClick={() => void run()} type="button"
+        className={runButton}
+        disabled={busy}
+        onClick={() => void run()}
+        type="button"
       >
-        {busy ? "Running evaluation…" : "Run evaluation"}
+        {busy ? "Running evaluation..." : "Run evaluation"}
       </button>
+
       {failure ? <div className={error}>{failure}</div> : null}
-      <section aria-label="Evaluation statistics" className={stats}>
-        <div className={stat}><div className={statLabel}>Recall@5</div><div className={statValue}>{result ? `${(result.recallAt5 * 100).toFixed(1)}%` : "—"}</div></div>
-        <div className={stat}><div className={statLabel}>Avg latency</div><div className={statValue}>{result ? `${Math.round(result.avgLatencyMs)} ms` : "—"}</div></div>
-        <div className={stat}><div className={statLabel}>Pass rate</div><div className={statValue}>{result ? `${(result.passRate * 100).toFixed(1)}%` : "—"}</div></div>
+
+      <section
+        aria-label="Evaluation statistics"
+        className={stats}
+      >
+        <div className={stat}>
+          <div className={statLabel}>Recall@5</div>
+          <div className={statValue}>
+            {result ? `${(result.recallAt5 * 100).toFixed(1)}%` : "—"}
+          </div>
+        </div>
+
+        <div className={stat}>
+          <div className={statLabel}>Avg latency</div>
+          <div className={statValue}>{result ? `${Math.round(result.avgLatencyMs)} ms` : "—"}</div>
+        </div>
+
+        <div className={stat}>
+          <div className={statLabel}>Pass rate</div>
+          <div className={statValue}>{result ? `${(result.passRate * 100).toFixed(1)}%` : "—"}</div>
+        </div>
       </section>
+
       {result ? (
         <div className={tableWrap}>
           <table className={table}>
             <thead>
-              <tr><th className={cell}>Result</th><th className={cell}>Query</th><th className={cell}>Expected load IDs</th><th className={cell}>Top 5 load IDs</th><th className={cell}>Recall@5</th><th className={cell}>Latency</th></tr>
+              <tr>
+                <th className={cell}>Result</th>
+                <th className={cell}>Query</th>
+                <th className={cell}>Expected load IDs</th>
+                <th className={cell}>Top 5 load IDs</th>
+                <th className={cell}>Recall@5</th>
+                <th className={cell}>Latency</th>
+              </tr>
             </thead>
+
             <tbody>
               {result.results.map((item) => (
                 <tr key={item.query}>

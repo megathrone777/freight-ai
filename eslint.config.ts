@@ -133,6 +133,7 @@ const config = defineConfig([
       "@stylistic/jsx-tag-spacing": "error",
       "@stylistic/quotes": ["error", "double"],
 
+      "@typescript-eslint/no-deprecated": "error",
       "@typescript-eslint/no-misused-promises": "off",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/explicit-function-return-type": "error",

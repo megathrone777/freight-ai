@@ -5,12 +5,8 @@ globalStyle("html, body", {
   width: "100%",
 });
 
-globalStyle("html", {
-  overflowY: "scroll",
-});
-
 globalStyle("body", {
-  fontFamily: "Inter, var(--font-avenir), sans-serif",
+  fontFamily: "var(--font-jetbrains-mono), sans-serif",
   minWidth: 340,
   MozOsxFontSmoothing: "grayscale",
   WebkitFontSmoothing: "antialiased",
@@ -40,5 +36,5 @@ globalStyle("object", {
 });
 
 globalStyle("b", ({ fonts }) => ({
-  fontWeight: fonts.demi,
+  fontWeight: fonts.bold,
 }));

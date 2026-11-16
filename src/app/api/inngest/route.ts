@@ -1,9 +1,10 @@
 import { serve } from "inngest/next";
 
-import { inngest } from "@/lib/inngest/client";
-import { inngestFunctions } from "@/lib/inngest/functions";
+import { inngest } from "@/services";
 
-const handlers = serve({ client: inngest, functions: inngestFunctions });
+const { client, functions } = inngest;
+
+const handlers = serve({ client, functions });
 
 export const GET = handlers.GET;
 export const POST = handlers.POST;

@@ -16,9 +16,10 @@ const config: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     dangerouslyAllowSVG: true,
   },
-  outputFileTracingIncludes: {
-    "/api/maplibre-worker": ["./node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs"],
-  },
+  // outputFileTracingIncludes: {
+  //   "/api/maplibre-worker": ["./node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs"],
+  // },
+  reactCompiler: true,
   reactStrictMode: false,
   redirects: () => [
     {
