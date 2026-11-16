@@ -7,10 +7,9 @@ import { toRaw } from "./toRaw";
 const generateFeedLoad = (
   random: TRandom,
   source: TRawSource,
-  expired = false,
   id: string = randomUUID()
 ): TNormalizedLoad => {
-  const base: TNormalizedLoad = makeBaseLoad(random, source, id, expired);
+  const base: TNormalizedLoad = makeBaseLoad(random, source, id);
 
   return normalizeLoad(toRaw(base, source), source);
 };

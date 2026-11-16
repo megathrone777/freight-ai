@@ -39,12 +39,7 @@ const makeDescription = (random: TRandom, origin: TCity, destination: TCity): st
   return `${text}${random() < 0.25 ? makeChoice(random, requirements.slice(1)) : ""}`;
 };
 
-const makeBaseLoad = (
-  random: TRandom,
-  source: TRawSource,
-  id: string,
-  expired: boolean
-): TNormalizedLoad => {
+const makeBaseLoad = (random: TRandom, source: TRawSource, id: string): TNormalizedLoad => {
   const origin: TCity = makeChoice(random, weightedCities);
   let destination: TCity = makeChoice(random, weightedCities);
 
@@ -54,9 +49,9 @@ const makeBaseLoad = (
   const weightT: number = +(1 + random() * 23).toFixed(1);
   const distance: number = haversineKm(origin, destination);
   const pickupAt: Date = new Date(Date.now() + (1 + Math.floor(random() * 7)) * 86400000);
-  const expiresAt: Date = new Date(
-    Date.now() + (expired ? -1 : 1) * (3600000 + random() * 47 * 3600000)
-  );
+  const expiresAt: Date = new Date();
+
+  expiresAt.setUTCFullYear(expiresAt.getUTCFullYear() + 1);
 
   return schema.parse({
     description: makeDescription(random, origin, destination),
@@ -71,7 +66,7 @@ const makeBaseLoad = (
     pickupAt,
     price: Math.max(0.01, +(distance * (1.1 + random() * 0.7) * (0.9 + random() * 0.2)).toFixed(2)),
     source,
-    status: expired ? "expired" : "active",
+    status: "active",
     weightT,
   });
 };

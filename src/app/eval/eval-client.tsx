@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
 
+import { colors } from "@/theme/variables";
+import { Button, Spinner } from "@/ui";
+
 import {
   cell,
   description,
   error,
   heading,
-  page,
   runButton,
   stat,
   statLabel,
@@ -14,6 +16,7 @@ import {
   statValue,
   table,
   tableWrap,
+  wrapperClass,
 } from "./page.css";
 
 const EvalClient = (): React.JSX.Element => {
@@ -39,28 +42,35 @@ const EvalClient = (): React.JSX.Element => {
   };
 
   return (
-    <main className={page}>
+    <div className={wrapperClass}>
       <h1 className={heading}>Freight AI evaluation</h1>
 
       <p className={description}>
         Run 15 seeded retrieval cases against active loads. Seed the database before evaluating.
       </p>
 
-      <button
+      <Button
         className={runButton}
         disabled={busy}
         onClick={() => void run()}
-        type="button"
+        size="large"
       >
-        {busy ? "Running evaluation..." : "Run evaluation"}
-      </button>
+        {busy ? (
+          <>
+            <Spinner
+              color={colors.amber}
+              template="small"
+            />
+            Running evaluation...
+          </>
+        ) : (
+          "Run evaluation"
+        )}
+      </Button>
 
       {failure ? <div className={error}>{failure}</div> : null}
 
-      <section
-        aria-label="Evaluation statistics"
-        className={stats}
-      >
+      <div className={stats}>
         <div className={stat}>
           <div className={statLabel}>Recall@5</div>
           <div className={statValue}>
@@ -77,7 +87,7 @@ const EvalClient = (): React.JSX.Element => {
           <div className={statLabel}>Pass rate</div>
           <div className={statValue}>{result ? `${(result.passRate * 100).toFixed(1)}%` : "—"}</div>
         </div>
-      </section>
+      </div>
 
       {result ? (
         <div className={tableWrap}>
@@ -108,7 +118,7 @@ const EvalClient = (): React.JSX.Element => {
           </table>
         </div>
       ) : null}
-    </main>
+    </div>
   );
 };
 

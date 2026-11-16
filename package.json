@@ -44,6 +44,7 @@
     "build": "yarn lint && next build",
     "dev": "next dev",
     "dev:inngest": "npx --ignore-scripts=false inngest-cli@latest dev -u http://localhost:3000/api/inngest",
+    "db:extend-load-expirations": "tsx scripts/extendLoadExpirations.ts",
     "lint": "eslint ./src --config eslint.config.ts --flag unstable_native_nodejs_ts_config",
     "start": "next start",
     "typegen": "next typegen"

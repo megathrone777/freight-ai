@@ -1,23 +1,20 @@
 import { globalStyle } from "@/theme";
 
 globalStyle(".error", ({ devices }) => ({
-  alignContent: "center",
   alignItems: "center",
-  display: "grid",
-  gridAutoFlow: "row",
-  gridTemplateRows: "auto 320px auto",
+  display: "flex",
+  flexDirection: "column",
+  gap: 30,
   height: "100%",
   justifyContent: "center",
-  justifyItems: "center",
   padding: "35px 10px",
-  rowGap: 30,
   width: "100%",
 
   "@media": {
     [devices.desktopLg]: {
+      gap: 38,
       marginInline: "auto",
       maxWidth: 1300,
-      rowGap: 38,
     },
 
     [devices.desktopXl]: {

@@ -21,7 +21,7 @@ const generateSeedLoads = (limit = 2000, seed = 19940217): TNormalizedLoad[] => 
     const source: TRawSource = makeChoice(random, sources);
 
     loads.push(
-      generateFeedLoad(random, source, random() < 0.05, `seed-${`${index}`.padStart(4, "0")}`)
+      generateFeedLoad(random, source, `seed-${`${index}`.padStart(4, "0")}`)
     );
   }
 

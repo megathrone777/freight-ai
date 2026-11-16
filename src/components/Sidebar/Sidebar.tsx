@@ -1,60 +1,66 @@
-const Sidebar: React.FC = () => {
+"use client";
+
+import { useStore } from "@/hooks";
+import { Button } from "@/ui";
+
+import {
+  cardClass,
+  headerClass,
+  listClass,
+  metaClass,
+  routeClass,
+  selectedCardClass,
+  statusClass,
+  titleClass,
+  wrapperClass,
+} from "./Sidebar.css";
+
+import type { TProps } from "./Sidebar.types";
+
+const Sidebar: React.FC<TProps> = ({ loads }) => {
+  const { activeLoad, setActiveLoad } = useStore("activeLoad", "setActiveLoad");
+
+  const handleLoadClick = (load: TLoadRecord): void => {
+    setActiveLoad(load);
+  };
+
   return (
-    <section className={leftPanel}>
-      <div className={header}>
-        <h1 className={title}>Available freight</h1>
-        <span className={meta}>{visibleItems.length} loads</span>
+    <div className={wrapperClass}>
+      <div className={headerClass}>
+        <div className={titleClass}>Available freight</div>
+        <div className={metaClass}>{loads.length} loads</div>
       </div>
 
-      <div className={list}>
-        {visibleItems.map<React.ReactElement>((item) => (
-          <button
-            className={card}
-            key={item.id}
-            onClick={() => setSelected(item)}
-            type="button"
-          >
-            <span className={route}>
-              {item.origin} <span aria-hidden="true">→</span> {item.destination}
-            </span>
+      <div className={listClass}>
+        {loads.map<React.ReactElement>((load) => {
+          const { id } = load;
 
-            <div className={meta}>
-              {item.weightT} t · €{Math.round(item.price).toLocaleString()} · {item.source}
-            </div>
+          return (
+            <Button
+              className={activeLoad?.id === id ? `${cardClass} ${selectedCardClass}` : cardClass}
+              key={`load-${id}`}
+              onClick={() => handleLoadClick(load)}
+              template="tertiary"
+            >
+              <span className={routeClass}>
+                <span>{load.origin}</span>
+                <span>→</span>
+                <span>{load.destination}</span>
+              </span>
 
-            {searchReasons.has(item.id) ? (
-              <div className={meta}>{searchReasons.get(item.id)}</div>
-            ) : null}
+              <span className={metaClass}>
+                {load.weightT} t <b>&middot;</b> €{Math.round(load.price).toLocaleString()}{" "}
+                <b>&middot;</b> {load.source}
+              </span>
+              <span className={metaClass}>Pickup {load.pickupAt.slice(0, 10)}</span>
+              <span className={statusClass}>{load.status}</span>
+            </Button>
+          );
+        })}
 
-            <div className={item.status === "negotiating" ? negotiating : status}>
-              {item.status}
-            </div>
-          </button>
-        ))}
-
-        {visibleItems.length === 0 ? (
-          <div
-            className={meta}
-            style={{ padding: 16 }}
-          >
-            {searchResult.found
-              ? "No active loads matched. Try a different route or pickup date."
-              : "No active loads. Seed the database to begin."}
-          </div>
-        ) : null}
+        {loads.length === 0 ? <div className={metaClass}>No active loads found.</div> : null}
       </div>
-
-      <div style={{ padding: 16 }}>
-        <button
-          className={button}
-          disabled={busy}
-          onClick={() => void simulate()}
-          type="button"
-        >
-          {busy ? "Simulating…" : "Simulate incoming loads"}
-        </button>
-      </div>
-    </section>
+    </div>
   );
 };
 

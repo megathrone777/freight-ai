@@ -1,101 +1,107 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import ReactMap, { Marker } from "react-map-gl/maplibre";
+
+import { Fragment, useEffect, useRef } from "react";
+import ReactMap, { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { setWorkerUrl } from "maplibre-gl";
 
+import { useStore } from "@/hooks/useStore";
+import { colors } from "@/theme/variables";
 import { Icon } from "@/ui";
 
-import { markerClass } from "./Map.css";
+import { addressMarkerClass, markerClass, wrapperClass } from "./Map.css";
 
-import type { TRouteFeatureCollection } from "./Map.types";
+import type { MapRef } from "react-map-gl/maplibre";
+import type { TProps, TRouteFeatureCollection } from "./Map.types";
 
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
 
-const Map: React.FC = () => {
-  const [items, setItems] = useState<TLoadRecord[]>([]);
+const Map: React.FC<TProps> = ({ loads }) => {
+  const { activeLoad } = useStore("activeLoad");
+  const mapRef = useRef<MapRef>(null);
+  const visibleLoads: TLoadRecord[] = activeLoad ? [activeLoad] : loads;
+  const routes: TRouteFeatureCollection = {
+    features: visibleLoads.map((load) => ({
+      geometry: {
+        coordinates: [
+          [load.originLon, load.originLat],
+          [load.destinationLon, load.destinationLat],
+        ],
+        type: "LineString",
+      },
+      properties: { id: load.id },
+      type: "Feature",
+    })),
+    type: "FeatureCollection",
+  };
 
-  const visibleItems = useMemo(() => {
-    const currentItems: Map<string, TLoadRecord> = new Map(items.map((item) => [item.id, item]));
-    const source: TLoadRecord[] = searchResult.found ? searchMatches : items;
+  useEffect(() => {
+    if (!activeLoad) {
+      return;
+    }
 
-    return source
-      .map((item) => currentItems.get(item.id) ?? item)
-      .filter((item) => item.status !== "expired");
-  }, [items, searchMatches, searchResult.found]);
+    const westSouth: [number, number] = [
+      Math.min(activeLoad.originLon, activeLoad.destinationLon),
+      Math.min(activeLoad.originLat, activeLoad.destinationLat),
+    ];
+    const eastNorth: [number, number] = [
+      Math.max(activeLoad.originLon, activeLoad.destinationLon),
+      Math.max(activeLoad.originLat, activeLoad.destinationLat),
+    ];
 
-  const geoJson: TRouteFeatureCollection = useMemo<TRouteFeatureCollection>(
-    (): TRouteFeatureCollection => ({
-      features: visibleItems.map((item) => ({
-        geometry: {
-          coordinates: [
-            [item.originLon, item.originLat],
-            [item.destinationLon, item.destinationLat],
-          ],
-          type: "LineString" as const,
-        },
-        properties: { id: item.id },
-        type: "Feature" as const,
-      })),
-      type: "FeatureCollection" as const,
-    }),
-    [visibleItems]
-  );
-
-  // useEffect(() => {
-  //   let active: boolean = true;
-
-  //   void fetch("/api/loads").then(async (response): Promise<void> => {
-  //     if (!response.ok) {
-  //       throw new Error(`Could not load freight: ${response.status}`);
-  //     }
-
-  //     const result: TLoadRecord[] = await response.json();
-
-  //     if (active) {
-  //       setItems(result);
-  //     }
-  //   });
-  // .catch((failure: unknown) =>
-  //   setErrorMessage(failure instanceof Error ? failure.message : "Could not load freight.")
-  // );
-  //   return (): void => {
-  //     active = false;
-  //   };
-  // }, []);
+    mapRef.current?.fitBounds([westSouth, eastNorth], {
+      duration: 900,
+      maxZoom: 10,
+      padding: 88,
+    });
+  }, [activeLoad]);
 
   return (
-    <ReactMap
-      attributionControl={false}
-      initialViewState={{ latitude: 49.8, longitude: 15.4, zoom: 6.7 }}
-      mapStyle="https://tiles.openfreemap.org/styles/fiord"
-    >
-      {visibleItems.map((item) => (
-        <Marker
-          anchor="center"
-          className={markerClass}
-          key={item.id}
-          latitude={item.originLat}
-          longitude={item.originLon}
-        >
-          <Icon
-            className={markerClass}
-            id="freight"
-          />
-        </Marker>
-      ))}
-
-      <Source
-        data={geoJson}
-        id={lineSourceId}
-        type="geojson"
+    <div className={wrapperClass}>
+      <ReactMap
+        attributionControl={false}
+        initialViewState={{ latitude: 49.8, longitude: 15.4, zoom: 6.7 }}
+        mapStyle="https://tiles.openfreemap.org/styles/fiord"
+        ref={mapRef}
+        style={{ height: "100%", width: "100%" }}
       >
-        <Layer
-          id="load-routes-line"
-          paint={{ "line-color": colors.violet, "line-opacity": 0.78, "line-width": 2.5 }}
-          type="line"
-        />
-      </Source>
-    </ReactMap>
+        {visibleLoads.map((load) => (
+          <Fragment key={load.id}>
+            <Marker
+              anchor="center"
+              latitude={load.originLat}
+              longitude={load.originLon}
+            >
+              <Icon
+                className={markerClass}
+                id="freight"
+              />
+            </Marker>
+            <Marker
+              anchor="bottom"
+              latitude={load.destinationLat}
+              longitude={load.destinationLon}
+            >
+              <Icon
+                className={addressMarkerClass}
+                id="address"
+              />
+            </Marker>
+          </Fragment>
+        ))}
+
+        <Source
+          data={routes}
+          id="load-routes"
+          type="geojson"
+        >
+          <Layer
+            id="load-routes-line"
+            paint={{ "line-color": colors.orange, "line-opacity": 0.9, "line-width": 3 }}
+            type="line"
+          />
+        </Source>
+      </ReactMap>
+    </div>
   );
 };
 

@@ -1,10 +1,21 @@
-import { style, recipe, type RecipeVariants } from "@/theme";
+import { recipe, type RecipeVariants } from "@/theme";
 
 export const wrapperClass = recipe(({ colors, devices, fonts }) => ({
   base: {
-    borderRadius: 6,
+    alignItems: "center",
+    border: 0,
+    borderRadius: 8,
+    cursor: "pointer",
     display: "inline-flex",
+    fontFamily: "inherit",
     fontWeight: fonts.medium,
+    gap: 8,
+    justifyContent: "center",
+    padding: "0 16px",
+    selectors: {
+      "&:disabled": { cursor: "not-allowed", opacity: 0.55 },
+      "&:focus-visible": { outline: `2px solid ${colors.amber}`, outlineOffset: 2 },
+    },
   },
 
   defaultVariants: {
@@ -15,10 +26,10 @@ export const wrapperClass = recipe(({ colors, devices, fonts }) => ({
   variants: {
     size: {
       large: {
-        height: 42,
+        height: 36,
 
         "@media": {
-          [devices.mobile]: { height: 36 },
+          [devices.tablet]: { height: 42 },
         },
       },
 
@@ -28,13 +39,10 @@ export const wrapperClass = recipe(({ colors, devices, fonts }) => ({
 
     template: {
       primary: { background: colors.blue, color: colors.white },
-      secondary: { background: colors.grayLighter, color: colors.black },
+      secondary: { background: colors.white, color: colors.black },
+      tertiary: { background: "transparent", color: colors.white },
     },
   },
 }));
-
-export const labelClass = style({
-  cursor: "pointer",
-});
 
 export type TButtonVariants = RecipeVariants<typeof wrapperClass>;

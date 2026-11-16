@@ -6,3 +6,7 @@ export interface TRouteFeatureCollection {
   }>;
   type: "FeatureCollection";
 }
+
+export interface TProps {
+  loads: TLoadRecord[];
+}

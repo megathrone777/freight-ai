@@ -46,9 +46,9 @@ The page auto-updates as you edit the file.
 
 ## Freight AI demo
 
-The App Router UI renders load routes with `react-map-gl/maplibre`; OpenFreeMap styles and tiles are served through the same-origin `/api/tiles` proxy. Server routes and actions use Drizzle over Postgres.js; migrations and the seeded ingestion pipeline use `POSTGRES_URL_NON_POOLING`, while the app uses the transaction-pool URL in `POSTGRES_URL`. Three mock feeds normalize through zod, use Voyage embeddings and pgvector for hybrid search, and emit persisted domain events. The Gemini agent runs on the Vercel AI SDK, and Inngest handles durable negotiation steps and scheduled load expiry. Tool calls and emitted events are stored in the `traces` table.
+The App Router UI renders load routes with `react-map-gl/maplibre` and loads OpenFreeMap styles and tiles directly. Server routes and actions use Drizzle over Postgres.js; migrations and the seeded ingestion pipeline use `POSTGRES_URL_NON_POOLING`, while the app uses the transaction-pool URL in `POSTGRES_URL`. Three mock feeds normalize through zod, use Voyage embeddings and pgvector for hybrid search, and emit persisted domain events. The Gemini agent runs on the Vercel AI SDK, and Inngest handles durable negotiation steps and scheduled load expiry. Tool calls and emitted events are stored in the `traces` table.
 
-Live load changes use three-second polling behind `useLoadChanges`, so the transport can later be replaced with SSE or WebSockets. Polling is intentionally simpler than maintaining a push connection for this demo; mock feeds, seeded expected IDs, and the 15-minute negotiation flow are demo scaffolding rather than carrier production integrations.
+The `/api/loads`, `/api/loads/changes`, and `/api/loads/[id]/negotiation` endpoints remain available, but the main UI currently loads initial freight on the server and does not call or poll these routes. Mock feeds, seeded expected IDs, and the 15-minute negotiation flow are demo scaffolding rather than carrier production integrations.
 
 Set the server-only variables listed in `.env.example`. Apply migrations with `yarn db:migrate`, seed demo loads with `npm run seed` (optionally `-- --reset` or `-- --limit N`), and open `/eval` to run retrieval checks.
 

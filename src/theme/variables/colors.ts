@@ -4,6 +4,7 @@ const colors = {
   blue: "#3b82f6",
   gray: "#707171",
   green: "#21a235",
+  orange: "#ff9b1b",
   red: "#da2629",
   white: "#efefef",
   yellow: "#f0dc00",
