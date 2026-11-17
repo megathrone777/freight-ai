@@ -27,8 +27,8 @@ const Agent: React.FC = () => {
   const { error, messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/agent" }),
   });
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [query, setQuery] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>("");
   const isBusy: boolean = status === "submitted" || status === "streaming";
 
   const sendQuery = (): void => {
@@ -40,6 +40,10 @@ const Agent: React.FC = () => {
 
     void sendMessage({ text });
     setQuery("");
+  };
+
+  const handleInputChange = ({ currentTarget }: React.SyntheticEvent<HTMLInputElement>): void => {
+    setQuery(currentTarget.value);
   };
 
   const handleCollapseToggle = (): void => {
@@ -110,9 +114,9 @@ const Agent: React.FC = () => {
       <div className={inputRowClass}>
         <Input
           autoComplete="off"
-          onChange={(event) => setQuery(event.currentTarget.value)}
+          onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
-          placeholder="e.g. 12 t truck from Praha to Zlín tomorrow"
+          placeholder="e.g. 12t truck from Praha to Zlín tomorrow"
           value={query}
         />
 

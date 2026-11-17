@@ -21,7 +21,7 @@ const Sidebar: React.FC<TProps> = ({ loads }) => {
   const { activeLoad, setActiveLoad } = useStore("activeLoad", "setActiveLoad");
 
   const handleLoadClick = (load: TLoadRecord): void => {
-    setActiveLoad(load);
+    setActiveLoad(activeLoad?.id === load.id ? null : load);
   };
 
   return (

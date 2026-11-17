@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { Agent, Map, Sidebar } from "@/components";
+import { Agent, Details, Map, Sidebar } from "@/components";
 import { db, schema } from "@/db";
 
 import { contentClass, wrapperClass } from "./page.css";
@@ -47,6 +47,7 @@ const Page: React.FC<PageProps<"/">> = async () => {
 
       <div className={contentClass}>
         <Map {...{ loads }} />
+        <Details />
         <Agent />
       </div>
     </div>

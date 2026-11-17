@@ -8,6 +8,7 @@ export const wrapperClass = recipe(({ animations }) => ({
     animationTimingFunction: "linear",
     borderRadius: "50%",
     borderStyle: "solid",
+    flexShrink: 0,
   },
 
   defaultVariants: {

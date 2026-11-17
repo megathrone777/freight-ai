@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import ReactMap, { Layer, Marker, Source } from "react-map-gl/maplibre";
 import { setWorkerUrl } from "maplibre-gl";
 
@@ -18,6 +18,7 @@ setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url)
 const Map: React.FC<TProps> = ({ loads }) => {
   const { activeLoad } = useStore("activeLoad");
   const mapRef = useRef<MapRef>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const visibleLoads: TLoadRecord[] = activeLoad ? [activeLoad] : loads;
   const routes: TRouteFeatureCollection = {
     features: visibleLoads.map((load) => ({
@@ -35,25 +36,29 @@ const Map: React.FC<TProps> = ({ loads }) => {
   };
 
   useEffect(() => {
-    if (!activeLoad) {
-      return;
-    }
+    if (!isMapLoaded) return;
 
-    const westSouth: [number, number] = [
-      Math.min(activeLoad.originLon, activeLoad.destinationLon),
-      Math.min(activeLoad.originLat, activeLoad.destinationLat),
-    ];
-    const eastNorth: [number, number] = [
-      Math.max(activeLoad.originLon, activeLoad.destinationLon),
-      Math.max(activeLoad.originLat, activeLoad.destinationLat),
-    ];
+    const boundsLoads: TLoadRecord[] = activeLoad ? [activeLoad] : loads;
+
+    if (!boundsLoads.length) return;
+
+    const longitudes: number[] = boundsLoads.flatMap(({ destinationLon, originLon }) => [
+      originLon,
+      destinationLon,
+    ]);
+    const latitudes: number[] = boundsLoads.flatMap(({ destinationLat, originLat }) => [
+      originLat,
+      destinationLat,
+    ]);
+    const westSouth: [number, number] = [Math.min(...longitudes), Math.min(...latitudes)];
+    const eastNorth: [number, number] = [Math.max(...longitudes), Math.max(...latitudes)];
 
     mapRef.current?.fitBounds([westSouth, eastNorth], {
       duration: 900,
       maxZoom: 10,
       padding: 88,
     });
-  }, [activeLoad]);
+  }, [activeLoad, isMapLoaded, loads]);
 
   return (
     <div className={wrapperClass}>
@@ -61,6 +66,7 @@ const Map: React.FC<TProps> = ({ loads }) => {
         attributionControl={false}
         initialViewState={{ latitude: 49.8, longitude: 15.4, zoom: 6.7 }}
         mapStyle="https://tiles.openfreemap.org/styles/fiord"
+        onLoad={() => setIsMapLoaded(true)}
         ref={mapRef}
         style={{ height: "100%", width: "100%" }}
       >
