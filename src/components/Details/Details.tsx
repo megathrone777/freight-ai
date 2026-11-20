@@ -16,6 +16,10 @@ import {
   messagesClass,
   metaClass,
   noticeClass,
+  processClass,
+  processStepClass,
+  acceptedStatusClass,
+  rejectedStatusClass,
   routeClass,
   statusClass,
   wrapperClass,
@@ -24,7 +28,7 @@ import {
 import type { TNegotiationSnapshot } from "./Details.types";
 
 const Details: React.FC = () => {
-  const { activeLoad } = useStore("activeLoad");
+  const { activeLoad, priceProposal } = useStore("activeLoad", "priceProposal");
   const [snapshotState, setSnapshotState] = useState<{
     loadId: string;
     snapshot: TNegotiationSnapshot;
@@ -36,6 +40,8 @@ const Details: React.FC = () => {
   const snapshot = snapshotState?.loadId === loadId ? snapshotState.snapshot : null;
   const errorMessage = errorState?.loadId === loadId ? errorState.message : null;
   const notice = noticeState?.loadId === loadId ? noticeState.message : null;
+  const visibleProposal =
+    priceProposal && (!activeLoad || activeLoad.id === priceProposal.loadId) ? priceProposal : null;
   const counterOffer = snapshot?.messages.find((message) => message.kind === "CounterOffer");
   const negotiation = snapshot?.negotiation ?? null;
   const isExpired: boolean =
@@ -136,12 +142,17 @@ const Details: React.FC = () => {
     }
   };
 
-  if (!activeLoad) return null;
+  if (!activeLoad && !visibleProposal) return null;
 
   const handleStartNegotiation = async (): Promise<void> => {
-    await runNegotiationAction(async (): Promise<void> => {
-      await startNegotiation(activeLoad.id);
-    }, "Negotiation started. Waiting for the agent's counteroffer.");
+    if (!activeLoad) return;
+
+    await runNegotiationAction(
+      async (): Promise<void> => {
+        await startNegotiation(activeLoad.id);
+      },
+      "Negotiation started. Waiting for the agent's counteroffer."
+    );
   };
 
   const handleRetryNegotiation = async (): Promise<void> => {
@@ -166,19 +177,49 @@ const Details: React.FC = () => {
 
   return (
     <div className={wrapperClass}>
-      <h2 className={headingClass}>Load details</h2>
+      {activeLoad ? (
+        <>
+          <h2 className={headingClass}>Load details</h2>
 
-      <div className={routeClass}>
-        {activeLoad.origin} → {activeLoad.destination}
-      </div>
+          <div className={routeClass}>
+            {activeLoad.origin} → {activeLoad.destination}
+          </div>
 
-      <div className={metaClass}>
-        {activeLoad.description}
-        <br />
-        {activeLoad.weightT} t <b>&middot;</b> €{Math.round(activeLoad.price).toLocaleString()}{" "}
-        <b>&middot;</b>
-        pickup {activeLoad.pickupAt.slice(0, 10)}
-      </div>
+          <div className={metaClass}>
+            {activeLoad.description}
+            <br />
+            {activeLoad.weightT} t <b>&middot;</b> €{Math.round(activeLoad.price).toLocaleString()}{" "}
+            <b>&middot;</b>
+            pickup {activeLoad.pickupAt.slice(0, 10)}
+          </div>
+        </>
+      ) : null}
+
+      {visibleProposal ? (
+        <div className={processClass}>
+          <h2 className={headingClass}>Price check</h2>
+          <div
+            className={visibleProposal.accepted ? acceptedStatusClass : rejectedStatusClass}
+          >
+            {visibleProposal.accepted ? "Accepted within allowed range" : "Outside allowed range"}
+          </div>
+          <div className={processStepClass}>
+            <span>Your counteroffer</span>
+            <span>€{visibleProposal.targetPrice.toLocaleString()}</span>
+          </div>
+          <div className={processStepClass}>
+            <span>Allowed range</span>
+            <span>
+              €{visibleProposal.allowedRange.minimum.toLocaleString()}–€
+              {visibleProposal.allowedRange.maximum.toLocaleString()}
+            </span>
+          </div>
+          <div className={processStepClass}>
+            <span>{visibleProposal.accepted ? "Accepted price" : "Nearest allowed price"}</span>
+            <span>€{visibleProposal.proposedPrice.toLocaleString()}</span>
+          </div>
+        </div>
+      ) : null}
 
       {negotiation ? (
         <>

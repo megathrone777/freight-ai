@@ -53,7 +53,7 @@ export const messageClass = style(({ colors }) => ({
   fontSize: 15,
   lineHeight: 1.55,
   maxWidth: "90%",
-  padding: "12px 14px",
+  padding: "12px 14px 0",
   whiteSpace: "pre-wrap",
 }));
 
@@ -73,7 +73,7 @@ export const labelClass = style(({ fonts }) => ({
 }));
 
 export const partsClass = style({
-  marginTop: 4,
+  paddingBlock: "4px 8px",
 });
 
 export const inputRowClass = style({

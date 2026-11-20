@@ -48,7 +48,7 @@ const Page: React.FC<PageProps<"/">> = async () => {
       <div className={contentClass}>
         <Map {...{ loads }} />
         <Details />
-        <Agent />
+        <Agent {...{ loads }} />
       </div>
     </div>
   );

@@ -1,2 +1,2 @@
 export { store } from "./store";
-export type { TStore } from "./types";
+export type { TPriceProposal, TStore } from "./types";

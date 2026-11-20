@@ -16,7 +16,7 @@ import type { TProps, TRouteFeatureCollection } from "./Map.types";
 setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
 
 const Map: React.FC<TProps> = ({ loads }) => {
-  const { activeLoad } = useStore("activeLoad");
+  const { activeLoad, priceProposal } = useStore("activeLoad", "priceProposal");
   const mapRef = useRef<MapRef>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const visibleLoads: TLoadRecord[] = activeLoad ? [activeLoad] : loads;
@@ -29,7 +29,10 @@ const Map: React.FC<TProps> = ({ loads }) => {
         ],
         type: "LineString",
       },
-      properties: { id: load.id },
+      properties: {
+        accepted: priceProposal?.loadId === load.id && priceProposal.accepted,
+        id: load.id,
+      },
       type: "Feature",
     })),
     type: "FeatureCollection",
@@ -102,7 +105,16 @@ const Map: React.FC<TProps> = ({ loads }) => {
         >
           <Layer
             id="load-routes-line"
-            paint={{ "line-color": colors.orange, "line-opacity": 0.9, "line-width": 3 }}
+            paint={{
+              "line-color": [
+                "case",
+                ["boolean", ["get", "accepted"], false],
+                colors.green,
+                colors.orange,
+              ],
+              "line-opacity": 0.9,
+              "line-width": 3,
+            }}
             type="line"
           />
         </Source>

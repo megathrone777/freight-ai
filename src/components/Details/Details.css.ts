@@ -57,6 +57,36 @@ export const messageClass = style({
   justifyContent: "space-between",
 });
 
+export const processClass = style(({ colors }) => ({
+  border: `1px solid ${colors.gray}`,
+  borderRadius: 8,
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+  padding: 12,
+}));
+
+export const processStepClass = style(({ colors }) => ({
+  color: colors.gray,
+  display: "flex",
+  fontSize: 14,
+  justifyContent: "space-between",
+}));
+
+export const acceptedStatusClass = style(({ colors, fonts }) => ({
+  color: colors.green,
+  fontSize: 13,
+  fontWeight: fonts.semiBold,
+  textTransform: "uppercase",
+}));
+
+export const rejectedStatusClass = style(({ colors, fonts }) => ({
+  color: colors.amber,
+  fontSize: 13,
+  fontWeight: fonts.semiBold,
+  textTransform: "uppercase",
+}));
+
 export const actionsClass = style({
   display: "flex",
   flexWrap: "wrap",
